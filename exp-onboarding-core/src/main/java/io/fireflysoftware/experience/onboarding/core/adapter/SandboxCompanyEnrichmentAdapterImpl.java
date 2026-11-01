@@ -28,12 +28,12 @@ import reactor.core.publisher.Mono;
 /**
  * Deterministic company profile. {@link #SAMPLE_QUERY} returns the same profile on every call.
  * Any other query completes empty. This adapter does not open a socket.
- * An installer selects {@link HttpCompanyEnrichmentAdapter} with
+ * An installer selects {@link HttpCompanyEnrichmentAdapterImpl} with
  * {@code firefly.onboarding.enrichment.adapter=live}.
  */
-@Component
+@Component("sandboxCompanyEnrichmentAdapter")
 @ConditionalOnProperty(name = "firefly.onboarding.enrichment.adapter", havingValue = "sandbox", matchIfMissing = true)
-public final class SandboxCompanyEnrichmentAdapter implements CompanyEnrichmentPort {
+public final class SandboxCompanyEnrichmentAdapterImpl implements CompanyEnrichmentPort {
 
     public static final String SAMPLE_QUERY = "sample-company";
 

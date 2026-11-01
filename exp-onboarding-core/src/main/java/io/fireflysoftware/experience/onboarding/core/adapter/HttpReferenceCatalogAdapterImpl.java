@@ -32,20 +32,20 @@ import java.util.Map;
 /**
  * Reads one product-family catalog row from domain-core-reference-data.
  */
-@Component
-public class HttpReferenceCatalogAdapter implements ReferenceCatalogPort {
+@Component("httpReferenceCatalogAdapter")
+public class HttpReferenceCatalogAdapterImpl implements ReferenceCatalogPort {
 
     private final CatalogsApi catalogs;
 
     @Autowired
-    public HttpReferenceCatalogAdapter(
+    public HttpReferenceCatalogAdapterImpl(
             @Value("${api-configuration.domain-platform.reference-data.base-path:http://localhost:8089}") String basePath) {
         ApiClient client = new ApiClient();
         client.setBasePath(basePath.endsWith("/") ? basePath.substring(0, basePath.length() - 1) : basePath);
         this(new CatalogsApi(client));
     }
 
-    HttpReferenceCatalogAdapter(CatalogsApi catalogs) {
+    HttpReferenceCatalogAdapterImpl(CatalogsApi catalogs) {
         this.catalogs = catalogs;
     }
 

@@ -52,13 +52,13 @@ import java.util.concurrent.TimeUnit;
  * An installer replaces this class when the enrichment protocol changes.
  * This bean is not created while that property is unset.
  */
-@Component
+@Component("httpCompanyEnrichmentAdapter")
 @ConditionalOnProperty(name = "firefly.onboarding.enrichment.adapter", havingValue = "live")
-public final class HttpCompanyEnrichmentAdapter implements CompanyEnrichmentPort {
+public final class HttpCompanyEnrichmentAdapterImpl implements CompanyEnrichmentPort {
 
     public static final String PATH = "/api/v1/enrichment/smart";
 
-    private static final Logger log = LoggerFactory.getLogger(HttpCompanyEnrichmentAdapter.class);
+    private static final Logger log = LoggerFactory.getLogger(HttpCompanyEnrichmentAdapterImpl.class);
     private static final ObjectMapper JSON = new ObjectMapper();
 
     private final WebClient client;
@@ -66,11 +66,11 @@ public final class HttpCompanyEnrichmentAdapter implements CompanyEnrichmentPort
     private final String endpoint;
 
     @Autowired
-    public HttpCompanyEnrichmentAdapter(BusinessIntelligenceProperties properties) {
+    public HttpCompanyEnrichmentAdapterImpl(BusinessIntelligenceProperties properties) {
         this(webClient(properties), properties, trim(requireBase(properties)));
     }
 
-    HttpCompanyEnrichmentAdapter(WebClient client, BusinessIntelligenceProperties properties, String endpoint) {
+    HttpCompanyEnrichmentAdapterImpl(WebClient client, BusinessIntelligenceProperties properties, String endpoint) {
         this.client = client;
         this.properties = properties;
         this.endpoint = endpoint;
@@ -110,7 +110,7 @@ public final class HttpCompanyEnrichmentAdapter implements CompanyEnrichmentPort
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
                 .flatMap(response -> extractCompanyData(JSON.valueToTree(response)))
-                .onErrorMap(WebClientResponseException.class, HttpCompanyEnrichmentAdapter::mapUpstreamError);
+                .onErrorMap(WebClientResponseException.class, HttpCompanyEnrichmentAdapterImpl::mapUpstreamError);
     }
 
     private static Mono<JsonNode> extractCompanyData(JsonNode envelope) {

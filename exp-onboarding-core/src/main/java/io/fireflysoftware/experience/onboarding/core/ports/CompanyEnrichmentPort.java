@@ -22,9 +22,9 @@ import reactor.core.publisher.Mono;
 
 /**
  * Company profile read for onboarding. The default adapter is
- * {@link io.fireflysoftware.experience.onboarding.core.adapter.SandboxCompanyEnrichmentAdapter}.
+ * {@link io.fireflysoftware.experience.onboarding.core.adapter.SandboxCompanyEnrichmentAdapterImpl}.
  * An installer selects
- * {@link io.fireflysoftware.experience.onboarding.core.adapter.HttpCompanyEnrichmentAdapter}
+ * {@link io.fireflysoftware.experience.onboarding.core.adapter.HttpCompanyEnrichmentAdapterImpl}
  * with {@code firefly.onboarding.enrichment.adapter=live}.
  */
 public interface CompanyEnrichmentPort {

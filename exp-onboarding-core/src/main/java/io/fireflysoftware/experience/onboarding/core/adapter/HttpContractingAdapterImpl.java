@@ -32,20 +32,20 @@ import java.util.UUID;
 /**
  * Opens an agreement through domain-common-contracts. Quote, bind, and claim stay on their own domains.
  */
-@Component
-public class HttpContractingAdapter implements ContractingPort {
+@Component("httpContractingAdapter")
+public class HttpContractingAdapterImpl implements ContractingPort {
 
     private final ContractsApi contracts;
 
     @Autowired
-    public HttpContractingAdapter(
+    public HttpContractingAdapterImpl(
             @Value("${api-configuration.domain-platform.common-contracts.base-path:http://localhost:8090}") String basePath) {
         ApiClient client = new ApiClient();
         client.setBasePath(trim(basePath));
         this.contracts = new ContractsApi(client);
     }
 
-    HttpContractingAdapter(ContractsApi contracts) {
+    HttpContractingAdapterImpl(ContractsApi contracts) {
         this.contracts = contracts;
     }
 
@@ -55,7 +55,7 @@ public class HttpContractingAdapter implements ContractingPort {
                 .partyId(partyId)
                 .contractType(contractType)
                 .description(description);
-        return contracts.createContract(command, UUID.randomUUID().toString()).map(HttpContractingAdapter::contractId);
+        return contracts.createContract(command, UUID.randomUUID().toString()).map(HttpContractingAdapterImpl::contractId);
     }
 
     private static UUID contractId(Object body) {
