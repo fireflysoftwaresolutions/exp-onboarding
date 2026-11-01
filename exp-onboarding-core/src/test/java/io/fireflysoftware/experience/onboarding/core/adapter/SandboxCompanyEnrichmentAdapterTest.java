@@ -40,25 +40,25 @@ class SandboxCompanyEnrichmentAdapterTest {
 
     @Test
     void sandboxReturnsTheStableProfileForTheKnownSample() {
-        var adapter = new SandboxCompanyEnrichmentAdapter();
-        JsonNode first = adapter.companyData(SandboxCompanyEnrichmentAdapter.SAMPLE_QUERY).block(Duration.ofSeconds(2));
-        JsonNode second = adapter.companyData(SandboxCompanyEnrichmentAdapter.SAMPLE_QUERY).block(Duration.ofSeconds(2));
+        var adapter = new SandboxCompanyEnrichmentAdapterImpl();
+        JsonNode first = adapter.companyData(SandboxCompanyEnrichmentAdapterImpl.SAMPLE_QUERY).block(Duration.ofSeconds(2));
+        JsonNode second = adapter.companyData(SandboxCompanyEnrichmentAdapterImpl.SAMPLE_QUERY).block(Duration.ofSeconds(2));
 
         assertThat(first).isEqualTo(second);
         assertThat(first.path("NAME").asText()).isEqualTo("Sandbox Sample Company");
-        assertThat(first.path("BVD_ID_NUMBER").asText()).isEqualTo(SandboxCompanyEnrichmentAdapter.SAMPLE_QUERY);
+        assertThat(first.path("BVD_ID_NUMBER").asText()).isEqualTo(SandboxCompanyEnrichmentAdapterImpl.SAMPLE_QUERY);
         assertThat(first.path("CITY").asText()).isEqualTo("Austin");
         assertThat(first.path("COUNTRY").asText()).isEqualTo("US");
 
         var service = new BusinessSearchServiceImpl(adapter, new BusinessIntelligenceProperties());
-        JsonNode throughOnboarding = service.getCompanyData(SandboxCompanyEnrichmentAdapter.SAMPLE_QUERY)
+        JsonNode throughOnboarding = service.getCompanyData(SandboxCompanyEnrichmentAdapterImpl.SAMPLE_QUERY)
                 .block(Duration.ofSeconds(2));
         assertThat(throughOnboarding).isEqualTo(first);
     }
 
     @Test
     void sandboxReturnsEmptyForAnyOtherQuery() {
-        var adapter = new SandboxCompanyEnrichmentAdapter();
+        var adapter = new SandboxCompanyEnrichmentAdapterImpl();
         StepVerifier.create(adapter.companyData("other-company"))
                 .expectComplete()
                 .verify(Duration.ofSeconds(2));
@@ -76,7 +76,7 @@ class SandboxCompanyEnrichmentAdapterTest {
         var properties = new BusinessIntelligenceProperties();
         properties.setBasePath("http://enrichment.internal/");
         properties.getOrbis().setTenantId(UUID.fromString("efdd318a-d07a-45a6-bfbf-a9922f696c6f"));
-        var configured = new HttpCompanyEnrichmentAdapter(properties);
+        var configured = new HttpCompanyEnrichmentAdapterImpl(properties);
         assertThat(configured.configuredEndpoint()).isEqualTo("http://enrichment.internal");
 
         AtomicReference<String> seenUrl = new AtomicReference<>();
@@ -90,13 +90,13 @@ class SandboxCompanyEnrichmentAdapterTest {
                             .build());
                 })
                 .build();
-        JsonNode company = new HttpCompanyEnrichmentAdapter(client, properties, "http://enrichment.internal")
+        JsonNode company = new HttpCompanyEnrichmentAdapterImpl(client, properties, "http://enrichment.internal")
                 .companyData("BE1")
                 .block(Duration.ofSeconds(2));
 
         assertThat(seenUrl.get()).isEqualTo("http://enrichment.internal/api/v1/enrichment/smart");
         assertThat(company.path("NAME").asText()).isEqualTo("Live Co");
-        assertThatThrownBy(() -> new HttpCompanyEnrichmentAdapter(new BusinessIntelligenceProperties()))
+        assertThatThrownBy(() -> new HttpCompanyEnrichmentAdapterImpl(new BusinessIntelligenceProperties()))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("base-path");
     }
